@@ -1,0 +1,7 @@
+
+<h1>message_queue</h1>
+<ul id="actions">
+ <li>[<a href="[% SCRIPT_NAME %]/queue/">List queues</a>]</li> <li>[<a href="[% SCRIPT_NAME %]/message/">List messages</a>]</li>
+ <li>[<a href="[% SCRIPT_NAME %]/queue/;add">Add queue</a>]</li> <li>[<a href="[% SCRIPT_NAME %]/message/;add">Add message</a>]</li>
+</ul>
+ 

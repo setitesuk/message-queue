@@ -1,0 +1,12 @@
+
+<h2>queue </h2>
+<form method="post" action="[% model.id_queue %]">
+ <ul>
+  <li>
+   <label for="name">name</label>
+   <input type="text" id="name" name="name" value="[% model.name %]" />
+  </li>
+ </ul>
+ <input type="submit" value="Update" />
+</form>
+ 

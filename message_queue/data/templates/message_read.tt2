@@ -1,0 +1,16 @@
+
+[<a href="[% model.id_message %];edit">Edit</a>]
+<h2>message </h2>
+<table>
+ <tr><th>date</th><td>[% model.date %]</td></tr>
+ <tr><th>message</th><td>[% model.message %]</td></tr>
+ <tr><th>under_action</th><td>[% model.under_action %]</td></tr>
+ <tr>
+  <th>queue</th>
+  <td>[<a href="[% SCRIPT_NAME %]/queue/[% model.id_queue %]">details</a>]</td>
+ </tr>
+</table>
+
+
+
+ 

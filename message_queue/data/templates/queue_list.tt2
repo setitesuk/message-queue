@@ -1,0 +1,16 @@
+
+<h2>queues </h2>
+<table id="queue_list">
+ <caption>queue list</caption>
+ <thead><tr><th>name</th></tr></thead>
+ <tbody>
+[% FOREACH queue = model.queues %]
+<tr>
+ <td>[% queue.name %]</td>
+ <td>[<a href="[% SCRIPT_NAME %]/queue/[% queue.id_queue %]">details</a>]</td>
+</tr>
+[% END %]
+ </tbody>
+</table>
+
+ 

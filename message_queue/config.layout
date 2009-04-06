@@ -1,0 +1,1 @@
+/Users/ajb/dev/bin/clearpress '--new' 'message_queue' 'message->queue queue(name) message(message,date:date,under_action)' '-driver=SQLite'

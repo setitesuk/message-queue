@@ -1,0 +1,18 @@
+
+<h2>message </h2>
+<form method="post" action="[% model.id_message %]">
+ <ul>
+  <li>
+   <label for="date">date</label>
+   <input type="text" id="date" name="date" value="[% model.date %]" />
+  </li>  <li>
+   <label for="message">message</label>
+   <input type="text" id="message" name="message" value="[% model.message %]" />
+  </li>  <li>
+   <label for="under_action">under_action</label>
+   <input type="text" id="under_action" name="under_action" value="[% model.under_action %]" />
+  </li>
+ </ul>
+ <input type="submit" value="Update" />
+</form>
+ 

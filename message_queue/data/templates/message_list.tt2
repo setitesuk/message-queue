@@ -1,0 +1,16 @@
+
+<h2>messages </h2>
+<table id="message_list">
+ <caption>message list</caption>
+ <thead><tr><th>date</th><th>message</th><th>under_action</th></tr></thead>
+ <tbody>
+[% FOREACH message = model.messages %]
+<tr>
+ <td>[% message.date %]</td><td>[% message.message %]</td><td>[% message.under_action %]</td>
+ <td>[<a href="[% SCRIPT_NAME %]/message/[% message.id_message %]">details</a>]</td>
+</tr>
+[% END %]
+ </tbody>
+</table>
+
+ 

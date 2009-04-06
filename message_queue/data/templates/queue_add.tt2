@@ -1,0 +1,11 @@
+
+<h2>queue </h2>
+<form method="post" action="[% SCRIPT_NAME %]/queue/">
+ <ul>  <li>
+   <label for="name">name</label>
+   <input type="text" id="name" name="name" value="[% model.name %]" />
+  </li>
+ </ul>
+ <input type="submit" value="Add" />
+</form>
+ 

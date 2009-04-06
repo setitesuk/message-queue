@@ -1,0 +1,13 @@
+
+DROP TABLE IF EXISTS message;
+CREATE TABLE message (
+  date date,
+  message text,
+  under_action integer(1),
+  id_queue integer,
+  id_message integer primary key autoincrement,
+  sender text
+);
+
+CREATE INDEX message_id_queue on message (id_queue);
+ 

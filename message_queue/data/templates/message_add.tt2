@@ -1,0 +1,22 @@
+
+<h2>message </h2>
+<form method="post" action="[% SCRIPT_NAME %]/message/">
+ <ul>
+  <li>
+   <label for="id_queue">id_queue</label>
+   <input type="hidden" id="[% model.id_queue %]" name="id_queue" value="[% model.id_queue %]" />[% model.id_queue %]
+  </li>
+  <li>
+   <label for="date">date</label>
+   <input type="text" id="date" name="date" value="[% model.date %]" />
+  </li>  <li>
+   <label for="message">message</label>
+   <input type="text" id="message" name="message" value="[% model.message %]" />
+  </li>  <li>
+   <label for="under_action">under_action</label>
+   <input type="text" id="under_action" name="under_action" value="[% model.under_action %]" />
+  </li>
+ </ul>
+ <input type="submit" value="Add" />
+</form>
+ 

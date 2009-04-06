@@ -1,0 +1,15 @@
+
+[<a href="[% model.id_queue %];edit">Edit</a>]
+<h2>queue </h2>
+<table>
+ <tr><th>name</th><td>[% model.name %]</td></tr>
+
+</table>
+
+[% PROCESS message_list.tt2 %]
+
+
+
+ [<a href="[% SCRIPT_NAME %]/message/;add?id_queue=[% model.id_queue %]">Add message</a>]
+
+ 

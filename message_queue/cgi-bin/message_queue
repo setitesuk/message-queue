@@ -1,0 +1,25 @@
+#!/Users/ajb/dev/bin/perl -T
+
+use warnings;
+use strict;
+use lib qw(lib);
+use ClearPress::controller;
+
+use message_queue::util;
+use message_queue::view::error;
+
+use message_queue::view::queue;
+use message_queue::model::queue;
+use message_queue::view::message;
+use message_queue::model::message;
+
+our $VERSION = do { my ($r) = q$LastChangedRevision: 300 $ =~ /(\d+)/smx; $r; };
+
+main();
+0;
+
+sub main {
+  my $util = message_queue::util->new();
+  ClearPress::controller->handler($util);
+}
+ 

@@ -1,0 +1,7 @@
+
+<h2>queue </h2>
+queue saved ok. Click <a href="[% SCRIPT_NAME %]/queue/[% model.id_queue %]">here</a> to continue.
+<script type="text/javascript">
+ document.location.href="[% SCRIPT_NAME %]/queue/[% model.id_queue %]";
+</script>
+ 
