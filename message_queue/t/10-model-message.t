@@ -7,13 +7,7 @@ use t::util;
 
 use_ok('message_queue::model::queue');
 
-my $ua    = t::useragent->new({
-                is_success => 1,
-            });
-my $util  = t::util->new({
-                useragent => $ua,
-                fixtures  => 1,
-            });
+my $util = t::util->new({fixtures => 1});
 
 {
   my $model = message_queue::model::queue->new({
