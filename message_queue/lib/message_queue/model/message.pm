@@ -14,6 +14,7 @@ sub fields {
 	    date
 	    message
 	    under_action
+	    action_date
 	    sender
 	  );
 }

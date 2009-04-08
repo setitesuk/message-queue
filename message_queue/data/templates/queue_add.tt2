@@ -1,5 +1,4 @@
-
-<h2>queue </h2>
+<h2>Queue</h2>
 <form method="post" action="[% SCRIPT_NAME %]/queue/">
  <ul>  <li>
    <label for="name">name</label>

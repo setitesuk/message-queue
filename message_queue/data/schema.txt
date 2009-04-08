@@ -7,6 +7,7 @@ CREATE TABLE queue (
 DROP TABLE IF EXISTS message;
 CREATE TABLE message (
   date date,
+  action_date date,
   message text,
   under_action integer(1),
   id_queue integer,

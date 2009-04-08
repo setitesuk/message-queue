@@ -1,0 +1,6 @@
+<h2>Queue: [% model.id_message %]</h2>
+Redirecting to list of messages for [% model.id_message %]. Click <a href="[% SCRIPT_NAME %]/queue/[% model.id_message %]">here</a> to continue.
+<script type="text/javascript">
+ document.location.href="[% SCRIPT_NAME %]/queue/[% model.id_message %]";
+</script>
+ 
