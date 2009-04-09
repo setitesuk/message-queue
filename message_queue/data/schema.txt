@@ -4,6 +4,8 @@ CREATE TABLE queue (
   id_queue integer primary key autoincrement
 );
 
+CREATE INDEX queue_name on queue (name);
+
 DROP TABLE IF EXISTS message;
 CREATE TABLE message (
   date date,

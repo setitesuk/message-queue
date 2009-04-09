@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<queues>
+ <queue id_queue="1" name="test_queue_1">test_queue_1</queue>
+ <queue id_queue="2" name="test_queue_2">test_queue_2</queue>
+<queues>

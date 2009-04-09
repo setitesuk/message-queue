@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Carp;
 use English qw{-no_match_vars};
-use Test::More 'no_plan';
+use Test::More tests => 6;
 use t::util;
 
 use_ok('message_queue::model::queue');

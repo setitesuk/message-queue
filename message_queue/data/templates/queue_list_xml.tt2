@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<queues>[% FOREACH queue = model.queues %]
+ <queue id_queue="[% queue.id_queue %]" name="[% queue.name %]">[% queue.name %]</queue>[% END %]
+<queues>
+
+ 

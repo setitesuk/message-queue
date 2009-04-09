@@ -1,0 +1,4 @@
+[NamingConventions::Capitalization]
+packages = :no_restriction
+[Miscellanea::RequireRcsKeywords]
+keywords = Author

@@ -1,0 +1,15 @@
+---
+- id_message: 1
+  id_queue: 1
+  date: '2009-01-01 00:00:15'
+  message: 'Happy New Year'
+  under_action: 0
+  action_date:
+  sender: 'greeter'
+- id_message: 2
+  id_queue: 2
+  date: '2009-04-12 00:00:15'
+  message: 'Happy Easter'
+  under_action: 1
+  action_date: '2009-04-12 12:00:15'
+  sender: 'greeter'

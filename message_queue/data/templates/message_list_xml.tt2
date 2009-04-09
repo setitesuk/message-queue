@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>[% FOREACH message = model.messages %]
+  [% PROCESS message_xml_row.tt2 %][% END %]
+</messages>
