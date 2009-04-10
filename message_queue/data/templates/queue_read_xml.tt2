@@ -2,6 +2,6 @@
 <queue id_queue="[% model.id_queue %]" name="[% model.name %]">
   <name>[% model.name %]</name>
   <messages>[% FOREACH message = model.messages %]
-    [% PROCESS message_xml_row.tt2 %][% END %]
+    [% PROCESS message_json_row.tt2 %][% END %]
   </messages>
 </queue>

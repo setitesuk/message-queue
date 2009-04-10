@@ -1,0 +1,10 @@
+{
+  "id_message":"[% message.id_message %]",
+  "id_queue":"[% message.id_queue %]",
+  "queue":"[% message.queue.name %]",
+  "sender":"[% message.sender %]",
+  "body":"[% message.message %]",
+  "date":"[% message.body %]",
+  "under_action":"[% message.under_action %]",
+  "action_date":"[% message.action_date %]"
+}

@@ -6,6 +6,8 @@ use t::useragent;
 use Test::More;
 use YAML qw(LoadFile);
 use HTML::PullParser;
+use MIME::Lite;
+use MIME::Parser;
 
 $ENV{dev} = 'test';
 
@@ -225,5 +227,42 @@ sub match_tags {
 
   return 1;
 }
+###########
+# for catching emails, so firstly they don't get sent from within a test
+# and secondly you could then parse the caught email
+#
+
+sub catch_email {
+  my ($self, $model) = @_;
+  $model->{emails} ||= [];
+  my $sub = sub {
+                my $msg = shift;
+        	    push @{$model->{emails}}, $msg->as_string;
+                return;
+	        };
+  MIME::Lite->send('sub', $sub);
+  return;
+}
+
+##########
+# for parsing emails to get information from them, probably caught emails
+#
+
+sub parse_email {
+  my ($self, $email) = @_;
+  my $parser = MIME::Parser->new();
+  $parser->output_to_core(1);
+  my $entity = $parser->parse_data($email);
+  my $ref    = {
+		annotation => $entity->bodyhandle->as_string(),
+		subject    => $entity->head->get('Subject', 0),
+		to         => $entity->head->get('To',0)   || undef,
+		cc         => $entity->head->get('Cc',0)   || undef,
+		bcc        => $entity->head->get('Bcc',0)  || undef,
+		from       => $entity->head->get('From',0) || undef,
+	       };
+  return $ref;
+}
+
 
 1;

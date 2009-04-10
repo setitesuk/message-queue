@@ -1,0 +1,5 @@
+{"queues":[[% FOREACH queue = model.queues %]
+ {"id_queue":"[% queue.id_queue %]", "name":"[% queue.name %]"}[% "," IF ! loop.last %][% END %]]
+}
+
+ 
