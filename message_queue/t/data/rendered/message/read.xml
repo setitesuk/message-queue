@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message id_queue="1" queue="test_queue_1">
+  <id_message>1</id_message>
+  <id_queue>1</id_queue>
+  <queue>test_queue_1</queue>
+  <sender>greeter</sender>
+  <body>Happy New Year</body>
+  <date></date>
+  <under_action>0</under_action>
+  <action_date></action_date>
+</message>

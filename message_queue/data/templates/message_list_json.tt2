@@ -1,0 +1,4 @@
+{
+  "messages":[[% FOREACH message = model.messages %]
+    [% PROCESS message_json_row.tt2 %][% "," IF ! loop.last %][% END %]]
+}

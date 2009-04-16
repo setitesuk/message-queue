@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>
+  <message>
+  <id_message>1</id_message>
+  <id_queue>1</id_queue>
+  <queue>test_queue_1</queue>
+  <sender>greeter</sender>
+  <body>Happy New Year</body>
+  <date></date>
+  <under_action>0</under_action>
+  <action_date></action_date>
+</message>
+
+  <message>
+  <id_message>2</id_message>
+  <id_queue>2</id_queue>
+  <queue>test_queue_2</queue>
+  <sender>greeter</sender>
+  <body>Happy Easter</body>
+  <date></date>
+  <under_action>1</under_action>
+  <action_date>2009-04-12 12:00:15</action_date>
+</message>
+
+</messages>
