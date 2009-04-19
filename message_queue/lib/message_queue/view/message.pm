@@ -20,11 +20,11 @@ sub create {
     $content = $cgi->param('XForms:Model');
   }
 
-  my $parsed_xml = $self->parse_xml($content);
+  my $parsed_xml = $self->util->parser->parse_string($content);
 
   my $message = $parsed_xml->getElementsByTagName('message')->[0];
   my $body = $message->getElementsByTagName('body')->[0];
-  my $queue = $parsed_xml->getElementsByTagName('queue')->[0];
+  my $queue = $message->getElementsByTagName('queue')->[0];
 
   my $q_object = message_queue::model::queue->new({
     util => $util,
@@ -39,14 +39,15 @@ sub create {
     $date = $dt->ymd(q{-}) . q{ } . $dt->hms(q{:});
   }
 
+  my $message_body = $body->textContent();
   my $model = $self->model();
   $model->id_queue($q_object->id_queue());
 	$model->date($date);
-	$model->message($body->value());
+	$model->message($message_body);
 	$model->under_action(0);
 	$model->sender($message->getAttribute('sender'));
 
-  $model->save();
+  $model->create();
   return 1;
 }
 

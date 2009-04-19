@@ -65,31 +65,20 @@ my $util = t::util->new({fixtures => 1});
   my $href = from_json($render);
   isa_ok($href, 'HASH', q{from_json($render)});
 }
-__END__
+
 {
   my $str = t::request->new({
-			     PATH_INFO      => '/queue/test_queue_2',
-			     REQUEST_METHOD => 'GET',
+			     PATH_INFO      => '/message/;create_xml',
+			     REQUEST_METHOD => 'POST',
 			     util           => $util,
+			     cgi_params => {
+			       'XForms:Model' => q{<?xml version="1.0" encoding="utf-8"?>
+<message date="2009-01-01 00:00:01" sender="test_sender">
+	<queue name="test_queue_1" />
+	<body>some text</body>
+</message>
+			       },
+			     },
 			    });
-  ok($util->test_rendered($str, 't/data/rendered/queue/read.html'), 'read using queue name');
-}
-{
-  my $str = t::request->new({
-			     PATH_INFO      => '/queue/test_queue_2.xml',
-			     REQUEST_METHOD => 'GET',
-			     util           => $util,
-			    });
-  ok($util->test_rendered($str, 't/data/rendered/queue/read.xml'), 'read.xml using queue name');
-}
-{
-  my $str = t::request->new({
-			     PATH_INFO      => '/queue/test_queue_2.json',
-			     REQUEST_METHOD => 'GET',
-			     util           => $util,
-			    });
-  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
-  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
-  my $href = from_json($str);
-  isa_ok($href, 'HASH', q{from_json($render)});
+  ok($util->test_rendered($str, q{t/data/rendered/message/create_xforms_model.xml}), q{create_xml xforms:model plain text message saved ok});
 }

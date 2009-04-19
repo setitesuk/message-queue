@@ -5,7 +5,7 @@ use IO::Scalar;
 use Carp;
 use CGI;
 use t::util;
-use ClearPress::controller;
+use message_queue::controller;
 
 sub new {
   my ($class, $ref) = @_;
@@ -28,8 +28,8 @@ sub new {
 					   fixtures => 1,
 					  });
   $util->catch_email($ref);
-  $util->cgi(CGI->new());
-  my $cgi = $util->cgi();
+  my $cgi = CGI->new();
+  $util->cgi($cgi);
 
   for my $k (keys %{$ref->{cgi_params}}) {
     my $v = $ref->{cgi_params}->{$k};
@@ -39,13 +39,12 @@ sub new {
       $cgi->param($k, $v);
     }
   }
-
   $ref->{util} = $util;
 
   my $str;
   my $io = tie *STDOUT, 'IO::Scalar', \$str;
 
-  ClearPress::controller->handler($util);
+  message_queue::controller->handler($util);
   return $str;
 }
 

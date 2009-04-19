@@ -1,23 +1,38 @@
-# $Author: setitesuk@gmail.com$
-package message_queue::util;
+package message_queue::controller;
 use strict;
 use warnings;
-use base qw(ClearPress::util);
-use XML::LibXML;
+use base qw{ClearPress::controller};
+
+use message_queue::decorator;
+use message_queue::model::queue;
+use message_queue::model::message;
+use message_queue::view::error;
+use message_queue::view::queue;
+use message_queue::view::message;
+
 
 our $VERSION = 1.0;
 
-sub parser {
-  my ($self) = @_;
-  $self->{parser} ||= XML::LibXML->new();
-  return $self->{parser};
+sub decorator {
+  my ($self, $util) = @_;
+
+  if(!$self->{decorator}) {
+    my $appname        = $util->config->val('application', 'name') || 'Application';
+    $self->{decorator} = message_queue::decorator->new({
+						     title      => $appname,
+						     stylesheet => [$util->config->val('application','stylesheet')],
+						     cgi => $util->cgi(),
+						    });
+  }
+
+  return $self->{decorator};
 }
 
 1;
 __END__
 =head1 NAME
 
-message_queue::util
+message_queue::controller
 
 =head1 VERSION
 
@@ -25,7 +40,7 @@ message_queue::util
 
 =head1 SYNOPSIS
 
-  my $oUtil = message_queue::util->new({});
+  my $oController = message_queue::controller->new({});
 
 =head1 DESCRIPTION
 
@@ -45,7 +60,7 @@ message_queue::util
 
 =item base
 
-=item ClearPress::util
+=item ClearPress::controller
 
 =back
 

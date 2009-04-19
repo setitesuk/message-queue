@@ -1,23 +1,15 @@
-# $Author: setitesuk@gmail.com$
-package message_queue::util;
+package message_queue::decorator;
 use strict;
 use warnings;
-use base qw(ClearPress::util);
-use XML::LibXML;
+use base qw{ClearPress::decorator};
 
 our $VERSION = 1.0;
-
-sub parser {
-  my ($self) = @_;
-  $self->{parser} ||= XML::LibXML->new();
-  return $self->{parser};
-}
 
 1;
 __END__
 =head1 NAME
 
-message_queue::util
+message_queue::decorator
 
 =head1 VERSION
 
@@ -25,7 +17,7 @@ message_queue::util
 
 =head1 SYNOPSIS
 
-  my $oUtil = message_queue::util->new({});
+  my $oDecorator = message_queue::decorator->new({});
 
 =head1 DESCRIPTION
 
@@ -45,7 +37,7 @@ message_queue::util
 
 =item base
 
-=item ClearPress::util
+=item ClearPress::decorator
 
 =back
 

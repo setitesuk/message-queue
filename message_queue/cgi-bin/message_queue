@@ -3,15 +3,16 @@
 use warnings;
 use strict;
 use lib qw(lib);
-use ClearPress::controller;
 
+use message_queue::controller;
 use message_queue::util;
-use message_queue::view::error;
 
-use message_queue::view::queue;
-use message_queue::model::queue;
-use message_queue::view::message;
 use message_queue::model::message;
+use message_queue::model::queue;
+
+use message_queue::view::error;
+use message_queue::view::message;
+use message_queue::view::queue;
 
 our $VERSION = do { my ($r) = q$LastChangedRevision: 300 $ =~ /(\d+)/smx; $r; };
 
@@ -20,6 +21,6 @@ main();
 
 sub main {
   my $util = message_queue::util->new();
-  ClearPress::controller->handler($util);
+  message_queue::controller->handler($util);
 }
  

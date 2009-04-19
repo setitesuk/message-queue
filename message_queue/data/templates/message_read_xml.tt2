@@ -5,7 +5,7 @@
   <queue>[% model.queue.name %]</queue>
   <sender>[% model.sender %]</sender>
   <body>[% model.message %]</body>
-  <date>[% model.body %]</date>
+  <date>[% model.date %]</date>
   <under_action>[% model.under_action %]</under_action>
   <action_date>[% model.action_date %]</action_date>
 </message>
