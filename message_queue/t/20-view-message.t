@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Carp;
 use English qw{-no_match_vars};
-use Test::More tests => 17;
+use Test::More 'no_plan';#tests => 17;
 use t::util;
 use message_queue::model::message;
 use JSON;
@@ -80,5 +80,112 @@ my $util = t::util->new({fixtures => 1});
 			       },
 			     },
 			    });
+			    warn $str;
   ok($util->test_rendered($str, q{t/data/rendered/message/create_xforms_model.xml}), q{create_xml xforms:model plain text message saved ok});
+}
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/;create_xml',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{<?xml version="1.0" encoding="utf-8"?>
+<message date="2009-01-01 00:00:01" sender="test_sender">
+	<queue name="test_queue_1" />
+	<body><root><action to="perform">do something</action></root></body>
+</message>
+			       },
+			     },
+			    });
+	warn $str;
+  ok($util->test_rendered($str, q{t/data/rendered/message/create_postdata_with_xml_as_message_body.xml}), q{create_xml postdata xml message saved ok});
+}
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/;create_xml',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{<?xml version="1.0" encoding="utf-8"?>
+<message sender="test_sender">
+	<queue name="test_queue_1" />
+	<body>{"action":{"to":"perform","method":"do something with json"}}</body>
+</message>
+			       },
+			     },
+			    });
+	warn $str;
+  ok($util->test_rendered($str, q{t/data/rendered/message/create_postdata_with_json_as_message_body.xml}), q{create_xml postdata json message saved ok});
+}
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/;create_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":"string message"}}},
+			     },
+			    });
+	warn $str;
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  my $href = from_json($str);
+  isa_ok($href, 'HASH', q{create_json with message just a string ok});
+  my $test_hash = {
+    message => {
+      id_queue  => 2,
+      queue =>"test_queue_2",
+      id_message => 6,
+      sender => 'test_json_sender',
+      body => 'string message',
+      date => '2009-01-01 00:00:00',
+      under_action => 0,
+      action_date => ''
+    }
+  };
+  is_deeply($href, $test_hash, 'returned json from create is correct');
+}
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/;create_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":{"json":{"this":"is","some":["json","which"],"should":"be"},"stored":["as","a","string"]}
+	}}},
+			     },
+			    });
+	warn $str;
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  my $href = from_json($str);
+  isa_ok($href, 'HASH', q{create_json with message as more json ok});
+  my $test_hash = {
+    message => {
+      id_queue  => 2,
+      queue =>"test_queue_2",
+      id_message => 7,
+      sender => 'test_json_sender',
+      body => {
+        json => {
+          this => 'is',
+          some => ['json','which'],
+          should => 'be'
+          },
+        stored => ['as','a','string']
+      },
+      date => '2009-01-01 00:00:00',
+      under_action => 0,
+      action_date => ''
+    }
+  };
+  is_deeply($href, $test_hash, 'returned json from create_json when message is also json is correct');
 }

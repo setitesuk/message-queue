@@ -3,8 +3,8 @@
   "queue":"[% model.queue.name %]",
   "id_message":"[% model.id_message %]",
   "sender":"[% model.sender %]",
-  "body":"[% model.message %]",
-  "date":"[% model.body %]",
+  "body":[% model.json_message %],
+  "date":"[% model.date %]",
   "under_action":"[% model.under_action %]",
   "action_date":"[% model.action_date %]"}
 }

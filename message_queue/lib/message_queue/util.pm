@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use base qw(ClearPress::util);
 use XML::LibXML;
+use JSON;
 
 our $VERSION = 1.0;
 
@@ -11,6 +12,12 @@ sub parser {
   my ($self) = @_;
   $self->{parser} ||= XML::LibXML->new();
   return $self->{parser};
+}
+
+sub json_parser {
+  my ($self) = @_;
+  $self->{json_parser} ||= JSON->new();
+  return $self->{json_parser};
 }
 
 1;

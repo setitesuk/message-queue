@@ -60,6 +60,15 @@ sub _date_now {
   return $dt->ymd(q{-}) . q{ } . $dt->hms(q{:});
 }
 
+sub json_message {
+  my ($self) = @_;
+  my $message = $self->message();
+  if ($message =~ /\A[\[\{]/xms) {
+    return $message;
+  }
+  return q{"}.$message.q{"};
+}
+
 1;
 __END__
 =head1 NAME

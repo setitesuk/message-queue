@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message id_queue="1" queue="test_queue_1">
+  <id_message>5</id_message>
+  <id_queue>1</id_queue>
+  <queue>test_queue_1</queue>
+  <sender>test_sender</sender>
+  <body>{"action":{"to":"perform","method":"do something with json"}}</body>
+  <date>2009-01-01 00:00:01</date>
+  <under_action>0</under_action>
+  <action_date></action_date>
+</message>
