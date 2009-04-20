@@ -1,3 +1,5 @@
+# $Author: setitesuk@gmail.com$
+
 package message_queue::controller;
 use strict;
 use warnings;
@@ -45,6 +47,8 @@ message_queue::controller
 =head1 DESCRIPTION
 
 =head1 SUBROUTINES/METHODS
+
+=head2 decorator - obtains a decorator object
 
 =head1 DIAGNOSTICS
 

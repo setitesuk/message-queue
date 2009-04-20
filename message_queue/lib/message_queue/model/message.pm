@@ -63,7 +63,7 @@ sub _date_now {
 sub json_message {
   my ($self) = @_;
   my $message = $self->message();
-  if ($message =~ /\A[\[\{]/xms) {
+  if ($message =~ /\A[\[\{]/xms) { ## no critic (RegularExpressions::ProhibitEscapedMetacharacters)
     return $message;
   }
   return q{"}.$message.q{"};
@@ -94,6 +94,8 @@ message_queue::model::message
 =head2 create - ensures that on creation, a date is present
 
 =head2 update - ensures that on update, an action_date is present
+
+=head2 json_message - for outputing the json string with no quotes if the string matches a json string style
 
 =head1 DIAGNOSTICS
 

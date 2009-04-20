@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Carp;
 use English qw{-no_match_vars};
-use Test::More 'no_plan';#tests => 17;
+use Test::More tests => 19;
 use t::util;
 use message_queue::model::message;
 use JSON;
@@ -80,7 +80,6 @@ my $util = t::util->new({fixtures => 1});
 			       },
 			     },
 			    });
-			    warn $str;
   ok($util->test_rendered($str, q{t/data/rendered/message/create_xforms_model.xml}), q{create_xml xforms:model plain text message saved ok});
 }
 {
@@ -97,7 +96,7 @@ my $util = t::util->new({fixtures => 1});
 			       },
 			     },
 			    });
-	warn $str;
+
   ok($util->test_rendered($str, q{t/data/rendered/message/create_postdata_with_xml_as_message_body.xml}), q{create_xml postdata xml message saved ok});
 }
 {
@@ -114,7 +113,7 @@ my $util = t::util->new({fixtures => 1});
 			       },
 			     },
 			    });
-	warn $str;
+
   ok($util->test_rendered($str, q{t/data/rendered/message/create_postdata_with_json_as_message_body.xml}), q{create_xml postdata json message saved ok});
 }
 {
@@ -130,7 +129,7 @@ my $util = t::util->new({fixtures => 1});
 	"body":"string message"}}},
 			     },
 			    });
-	warn $str;
+
   $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
   $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
   my $href = from_json($str);
@@ -163,7 +162,7 @@ my $util = t::util->new({fixtures => 1});
 	}}},
 			     },
 			    });
-	warn $str;
+
   $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
   $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
   my $href = from_json($str);

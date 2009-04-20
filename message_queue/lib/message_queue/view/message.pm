@@ -92,7 +92,7 @@ sub _process_xml {
   } or do {
     croak $EVAL_ERROR;
   };
-  return 1;   
+  return 1;
 }
 
 sub _process_json {
@@ -105,7 +105,6 @@ sub _process_json {
 	$arg_refs->{sender} = $parsed_json->{message}->{sender};
 	my $message_body = $parsed_json->{message}->{body};
 	if (ref$message_body eq 'HASH' || ref$message_body eq 'ARRAY') {
-	  warn $message_body;
 	  $message_body = $self->util->json_parser->encode($message_body);
 	}
   $arg_refs->{message} = $message_body;
@@ -150,7 +149,7 @@ sub _get_q_object {
   });
   $q_object->read();
 
-  return $q_object;  
+  return $q_object;
 }
 
 sub read__by_queue {
@@ -189,6 +188,10 @@ message_queue::view::message
 =head1 SUBROUTINES/METHODS
 
 =head2 create - method called on creation of message
+
+=head2 create_xml - method called to process an incoming create that is xml
+
+=head2 create_json - method called to process an incoming create that is json
 
 =head2 read__by_queue - method to provide a response which will link through to queue/<name>
 

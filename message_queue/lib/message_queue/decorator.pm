@@ -1,3 +1,5 @@
+# $Author: setitesuk@gmail.com$
+
 package message_queue::decorator;
 use strict;
 use warnings;

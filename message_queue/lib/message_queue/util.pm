@@ -38,6 +38,10 @@ message_queue::util
 
 =head1 SUBROUTINES/METHODS
 
+=head2 parser - returns an xml parser object
+
+=head2 json_parser - returns a json parser object
+
 =head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT
