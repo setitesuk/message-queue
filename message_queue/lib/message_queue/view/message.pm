@@ -20,7 +20,7 @@ sub create_xml {
 
   my $parsed_xml;
   eval {
-    $parsed_xml = $self->util->parser->parse_string($content);
+    $parsed_xml = $util->parser->parse_string($content);
     1;
   } or do {
     croak 'Error parsing xml: ' . $EVAL_ERROR;
@@ -35,9 +35,10 @@ sub create_json {
   my $cgi     = $util->cgi();
 
   my $content = $self->_obtain_content();
+
   my $parsed_json;
   eval {
-    $parsed_json = $self->util->json_parser->decode($content);
+    $parsed_json = $util->json_parser->decode($content);
     1;
   } or do {
     croak 'Error parsing json: ' . $EVAL_ERROR;
@@ -86,6 +87,8 @@ sub _process_xml {
     message => $message_body,
     sender => $message->getAttribute('sender'),
   };
+	$arg_refs->{completed} = $message->getAttribute(q{completed}) || 0;
+	$arg_refs->{release} = $message->getAttribute(q{release}) || 0;
   eval {
     $self->_populate_model($arg_refs);
     1;
@@ -103,6 +106,8 @@ sub _process_json {
   $arg_refs->{id_queue} = $self->_get_q_object($parsed_json->{message}->{queue})->id_queue();
   $arg_refs->{date} = $parsed_json->{message}->{date} || $self->_get_date();
 	$arg_refs->{sender} = $parsed_json->{message}->{sender};
+	$arg_refs->{completed} = $parsed_json->{message}->{completed} || 0;
+	$arg_refs->{release} = $parsed_json->{message}->{release} || 0;
 	my $message_body = $parsed_json->{message}->{body};
 	if (ref$message_body eq 'HASH' || ref$message_body eq 'ARRAY') {
 	  $message_body = $self->util->json_parser->encode($message_body);
@@ -123,14 +128,23 @@ sub _populate_model {
   my ($self, $arg_refs) = @_;
   my $util = $self->util();
   my $model = $self->model();
-  
+
   $model->id_queue($arg_refs->{id_queue});
 	$model->date($arg_refs->{date});
 	$model->message($arg_refs->{message});
-	$model->under_action(0);
+	if (!$model->{id_message} || $arg_refs->{release}) {
+	  $model->under_action(0);
+	} else {
+	  $model->under_action(1);
+
+	}
 	$model->sender($arg_refs->{sender});
 
-  $model->create();
+  if ($model->id_message()) {
+    $model->update();
+  } else {
+    $model->create();
+  }
   return 1;
 }
 
@@ -159,6 +173,41 @@ sub read__by_queue {
   return 1;
 }
 
+sub update_json {
+  my ($self) = @_;
+  my $util   = $self->util();
+  my $cgi    = $util->cgi();
+
+  my $content = $self->_obtain_content();
+  my $parsed_json;
+  eval {
+    $parsed_json = $util->json_parser->decode($content);
+    1;
+  } or do {
+    croak 'Error parsing json: ' . $EVAL_ERROR;
+  };
+
+  return $self->_process_json($parsed_json);
+}
+
+sub update_xml {
+  my ($self) = @_;
+  my $util    = $self->util();
+  my $cgi     = $util->cgi();
+
+  my $content = $self->_obtain_content();
+
+  my $parsed_xml;
+  eval {
+    $parsed_xml = $util->parser->parse_string($content);
+    1;
+  } or do {
+    croak 'Error parsing xml: ' . $EVAL_ERROR;
+  };
+
+  return $self->_process_xml($parsed_xml);
+}
+
 sub update {
   my ($self,@args) = @_;
   my $model = $self->model();
@@ -166,6 +215,27 @@ sub update {
     return $self->delete(@args);
   }
   $model->save();
+  return 1;
+}
+
+sub delete_json {
+  my ($self) = @_;
+  my $util    = $self->util();
+  my $cgi     = $util->cgi();
+
+  my $content = $self->_obtain_content();
+
+  my $parsed_json;
+  eval {
+    $parsed_json = $util->json_parser->decode($content);
+    if (!$parsed_json->{message}->{completed}) {
+      croak q{no completed flag};
+    }
+    $self->delete();
+    1;
+  } or do {
+    croak 'Error parsing json: ' . $EVAL_ERROR;
+  };
   return 1;
 }
 
@@ -196,6 +266,8 @@ message_queue::view::message
 =head2 read__by_queue - method to provide a response which will link through to queue/<name>
 
 =head2 update - method called on update
+
+=head2 update_json - method to update a ticket via json input
 
 =head1 DIAGNOSTICS
 

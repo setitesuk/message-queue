@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Carp;
 use English qw{-no_match_vars};
-use Test::More tests => 19;
+use Test::More tests => 38;
 use t::util;
 use message_queue::model::message;
 use JSON;
@@ -115,7 +115,104 @@ my $util = t::util->new({fixtures => 1});
 			    });
 
   ok($util->test_rendered($str, q{t/data/rendered/message/create_postdata_with_json_as_message_body.xml}), q{create_xml postdata json message saved ok});
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]text\/xml[\n]+//xms;
+
+  my $parsed_response = $util->parser->parse_string($str);
+  my $id_message = $parsed_response->getElementsByTagName(q{id_message})->[0]->firstChild()->toString();
+  $id_message;
+
+  $str = t::request->new({
+			     PATH_INFO      => qq{/message/$id_message;update_xml},
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{<?xml version="1.0" encoding="utf-8"?>
+<message sender="test_sender" completed="0" release="0">
+  <id_message>5</id_message>
+	<queue name="test_queue_1" />
+	<body>{"action":{"to":"perform","method":"do something with json"}}</body>
+</message>
+},
+			     },
+			    });
+
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]text\/xml[\n]+//xms;
+  $parsed_response = $util->parser->parse_string($str);
+  my $under_action = $parsed_response->getElementsByTagName(q{under_action})->[0]->firstChild()->toString();
+  is($under_action, 1, q{message update_xml ok - is now under action});
+
+  $str = t::request->new({
+			     PATH_INFO      => qq{/message/$id_message;update_xml},
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{<?xml version="1.0" encoding="utf-8"?>
+<message sender="test_sender" completed="0" release="1">
+  <id_message>5</id_message>
+	<queue name="test_queue_1" />
+	<body>{"action":{"to":"perform","method":"do something with json"}}</body>
+</message>},
+            },
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]text\/xml[\n]+//xms;
+  $parsed_response = $util->parser->parse_string($str);
+  $under_action = $parsed_response->getElementsByTagName(q{under_action})->[0]->firstChild()->toString();
+  is($under_action, 0, q{message update_xml ok - message released});
+
+  $str = t::request->new({
+			     PATH_INFO      => qq{/message/$id_message;update_xml},
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{<?xml version="1.0" encoding="utf-8"?>
+<message sender="test_sender" completed="0" release="0">
+  <id_message>5</id_message>
+	<queue name="test_queue_1" />
+	<body>{"action":{"to":"perform","method":"do something with json"}}</body>
+</message>},
+			     },
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]text\/xml[\n]+//xms;
+  $parsed_response = $util->parser->parse_string($str);
+  $under_action = $parsed_response->getElementsByTagName(q{under_action})->[0]->firstChild()->toString();
+  is($under_action, 1, q{message update_xml ok - is now under action again});
+
+  $str = t::request->new({
+			     PATH_INFO      => qq{/message/$id_message;delete_xml},
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{<?xml version="1.0" encoding="utf-8"?>
+<message sender="test_sender" completed="1" release="0">
+  <id_message>5</id_message>
+	<queue name="test_queue_1" />
+	<body>{"action":{"to":"perform","method":"do something with json"}}</body>
+</message>},
+			     },
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]text\/xml[\n]+//xms;
+  $parsed_response = $util->parser->parse_string($str);
+  my $body = $parsed_response->getElementsByTagName(q{body})->[0]->firstChild();
+  is($body, undef, q{message delete_xml ok - body is undef});
+
+  $str = t::request->new({
+			     PATH_INFO      => qq{/message/$id_message.xml},
+			     REQUEST_METHOD => 'GET',
+			     util           => $util,
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]text\/xml[\n]+//xms;
+  $parsed_response = $util->parser->parse_string($str);
+  $body = $parsed_response->getElementsByTagName(q{body})->[0]->firstChild();
+  is($body, undef, q{message has been deleted - body is undef});
+
 }
+
 {
   my $str = t::request->new({
 			     PATH_INFO      => '/message/;create_json',
@@ -148,6 +245,7 @@ my $util = t::util->new({fixtures => 1});
   };
   is_deeply($href, $test_hash, 'returned json from create is correct');
 }
+
 {
   my $str = t::request->new({
 			     PATH_INFO      => '/message/;create_json',
@@ -187,4 +285,143 @@ my $util = t::util->new({fixtures => 1});
     }
   };
   is_deeply($href, $test_hash, 'returned json from create_json when message is also json is correct');
+}
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/;create_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":["json",{"this":"is","some":["json","which"],"should":"be"},{"stored":["as","a","string"]}]
+	}}},
+			     },
+			    });
+
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  my $href = from_json($str);
+  isa_ok($href, 'HASH', q{create_json with message as more json ok});
+  my $test_hash = {
+    message => {
+      id_queue  => 2,
+      queue =>"test_queue_2",
+      id_message => 8,
+      sender => 'test_json_sender',
+      body => [
+        'json', {
+          this => 'is',
+          some => ['json','which'],
+          should => 'be'
+          },
+        {stored => ['as','a','string']}
+      ],
+      date => '2009-01-01 00:00:00',
+      under_action => 0,
+      action_date => ''
+    }
+  };
+  is_deeply($href, $test_hash, 'returned json from create_json when message is also json is correct');
+}
+
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/1;update_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"id_message":"1",
+	"completed":"0",
+	"release":"0",
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":{"json":{"this":"is","some":["json","which"],"should":"be"},"stored":["as","a","string"]}
+	}}},
+			     },
+			    });
+
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  my $href = from_json($str);
+  isa_ok($href, 'HASH', q{update_json ok});
+  is($href->{message}->{under_action}, 1, q{ticket is under_action});
+  $str = t::request->new({
+			     PATH_INFO      => '/message/1;update_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"id_message":"1",
+	"completed":"0",
+	"release":"1",
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":{"json":{"this":"is","some":["json","which"],"should":"be"},"stored":["as","a","string"]}
+	}}},
+			     },
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  $href = from_json($str);
+  isa_ok($href, 'HASH', q{update_json ok});
+  is($href->{message}->{under_action}, 0, q{ticket has been released});
+  $str = t::request->new({
+			     PATH_INFO      => '/message/1;update_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"id_message":"1",
+	"completed":"0",
+	"release":"0",
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":{"json":{"this":"is","some":["json","which"],"should":"be"},"stored":["as","a","string"]}
+	}}},
+			     },
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  $href = from_json($str);
+  isa_ok($href, 'HASH', q{update_json ok});
+  is($href->{message}->{under_action}, 1, q{ticket has been taken again});
+  $str = t::request->new({
+			     PATH_INFO      => '/message/1;delete_json',
+			     REQUEST_METHOD => 'POST',
+			     util           => $util,
+			     cgi_params => {
+			       'POSTDATA' => q{{"message":{
+	"id_message":"1",
+	"completed":"1",
+	"release":"0",
+	"date":"2009-01-01 00:00:00",
+	"sender":"test_json_sender",
+	"queue":"test_queue_2",
+	"body":{"json":{"this":"is","some":["json","which"],"should":"be"},"stored":["as","a","string"]}
+	}}},
+			     },
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  $href = from_json($str);
+  isa_ok($href, 'HASH', q{delete_json ok});
+  is($href->{message}->{body}, q{}, q{ticket has been completed and removed});
+  $str = t::request->new({
+			     PATH_INFO      => '/message/1.json',
+			     REQUEST_METHOD => 'GET',
+			     util           => $util,
+			    });
+  $str =~ s/\AX-Generated-By:[ ]ClearPress\n//xms;
+  $str =~ s/\AContent-type:[ ]application\/javascript\n//xms;
+  $href = from_json($str);
+  isa_ok($href, 'HASH', q{delete_json ok});
+  is($href->{message}->{body}, q{}, q{ticket is no longer in system});
+
 }
