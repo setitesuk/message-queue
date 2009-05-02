@@ -239,6 +239,28 @@ sub delete_json {
   return 1;
 }
 
+sub delete_xml {
+  my ($self) = @_;
+  my $util    = $self->util();
+  my $cgi     = $util->cgi();
+
+  my $content = $self->_obtain_content();
+
+  my $parsed_xml;
+  eval {
+    $parsed_xml = $util->parser->parse_string($content);
+    if (!$parsed_xml->getElementsByTagName(q{message})->[0]->getAttribute(q{completed})) {
+      croak q{no completed flag}
+    }
+    $self->delete();
+    1;
+  } or do {
+    croak 'Error parsing xml: ' . $EVAL_ERROR;
+  };
+
+  return 1;
+}
+
 1;
 __END__
 =head1 NAME
@@ -267,7 +289,13 @@ message_queue::view::message
 
 =head2 update - method called on update
 
-=head2 update_json - method to update a ticket via json input
+=head2 update_json - method to update a message via json input
+
+=head2 delete_json - method to delete a message via json input
+
+=head2 update_xml - method to update a message via xml input
+
+=head2 delete_xml - method to delete a message via xml input
 
 =head1 DIAGNOSTICS
 
