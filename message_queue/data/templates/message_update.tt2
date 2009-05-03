@@ -1,7 +1,5 @@
-
-<h2>message </h2>
-message updated ok. Click <a href="[% SCRIPT_NAME %]/message/[% model.id_message %]">here</a> to continue.
+[% IF model.body %]<h2>Message Updated</h2>
+Message updated ok. Click <a href="[% SCRIPT_NAME %]/message/[% model.id_message %]">here</a> to continue.
 <script type="text/javascript">
  document.location.href="[% SCRIPT_NAME %]/message/[% model.id_message %]";
-</script>
- 
+</script>[% ELSE %][% PROCESS message_delete.tt2 %][% END %]

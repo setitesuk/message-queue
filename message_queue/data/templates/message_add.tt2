@@ -1,20 +1,19 @@
 
-<h2>message </h2>
+<h2>Add Message</h2>
 <form method="post" action="[% SCRIPT_NAME %]/message/">
  <ul>
   <li>
-   <label for="id_queue">id_queue</label>
-   <input type="hidden" id="[% model.id_queue %]" name="id_queue" value="[% model.id_queue %]" />[% model.id_queue %]
+   <label for="queue">Queue</label>
+   <select name="id_queue">[% FOREACH queue = model.queues %]
+     <option value="[% queue.id_queue %]">[% queue.name %]</option>[% END %]
+   </select>
   </li>
   <li>
-   <label for="date">date</label>
-   <input type="text" id="date" name="date" value="[% model.date %]" />
+   <label for="sender">Sender</label>
+   <input type="text" id="sender" name="sender" value="[% model.sender %]" />
   </li>  <li>
-   <label for="message">message</label>
-   <input type="text" id="message" name="message" value="[% model.message %]" />
-  </li>  <li>
-   <label for="under_action">under_action</label>
-   <input type="text" id="under_action" name="under_action" value="[% model.under_action %]" />
+   <label for="message">Message</label>
+   <textarea id="message" name="message" rows="10" cols="50">[% model.message %]</textarea>
   </li>
  </ul>
  <input type="submit" value="Add" />

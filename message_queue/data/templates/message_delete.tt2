@@ -1,0 +1,7 @@
+
+<h2>Message Completed </h2>
+Message completed and deleted ok. Click <a href="[% SCRIPT_NAME %]">here</a> to continue.
+<script type="text/javascript">
+ document.location.href="[% SCRIPT_NAME %]";
+</script>
+ 

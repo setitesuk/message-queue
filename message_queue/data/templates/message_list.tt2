@@ -14,7 +14,7 @@
 [% FOREACH message = model.messages %]
 <tr>
  <td>[% message.sender %]</td>
- <td>[% message.queue %]</td>
+ <td>[% message.queue.name %]</td>
  <td>[% message.date %]</td>
  <td><pre>[% message.message %]</pre></td>
  <td>[% message.under_action %]</td>

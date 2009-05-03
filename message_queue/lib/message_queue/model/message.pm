@@ -69,6 +69,11 @@ sub json_message {
   return q{"}.$message.q{"};
 }
 
+sub queues {
+  my ($self) = @_;
+  return message_queue::model::queue->new({util => $self->util()})->queues();
+}
+
 1;
 __END__
 =head1 NAME

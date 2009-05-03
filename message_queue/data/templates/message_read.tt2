@@ -1,13 +1,14 @@
 
 [<a href="[% model.id_message %];edit">Edit</a>]
-<h2>message </h2>
+<h2>Message </h2>
 <table>
- <tr><th>date</th><td>[% model.date %]</td></tr>
- <tr><th>message</th><td>[% model.message %]</td></tr>
- <tr><th>under_action</th><td>[% model.under_action %]</td></tr>
+ <tr><th>Date submitted</th><td>[% model.date %]</td></tr>
+ <tr><th>Sender</th><td>[% model.sender %]</td></tr>
+ <tr><th>Being Acted Upon</th><td>[% model.under_action %]</td></tr>
+ <tr><th>Message</th><td>[% model.message %]</td></tr>
  <tr>
-  <th>queue</th>
-  <td>[<a href="[% SCRIPT_NAME %]/queue/[% model.id_queue %]">details</a>]</td>
+  <th>Queue</th>
+  <td>[<a href="[% SCRIPT_NAME %]/queue/[% model.id_queue %]">[% model.queue.name %]</a>]</td>
  </tr>
 </table>
 

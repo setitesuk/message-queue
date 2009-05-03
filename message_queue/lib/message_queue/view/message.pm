@@ -58,15 +58,6 @@ sub _obtain_content {
   return $content;
 }
 
-sub create {
-  my ($self) = @_;
-  my $util    = $self->util();
-  my $cgi     = $util->cgi();
-
-  my $content = $self->_obtain_content();
-  return 1;
-}
-
 sub _process_xml {
   my ($self, $parsed_xml) = @_;
   my $util = $self->util();
@@ -211,9 +202,18 @@ sub update_xml {
 sub update {
   my ($self,@args) = @_;
   my $model = $self->model();
-  if ($model->under_action()) {
-    return $self->delete(@args);
-  }
+  my $cgi = $self->util->cgi();
+  my $release = $cgi->param('release');
+  my $completed = $cgi->param('completed');
+  my $under_action = $cgi->param('under_action');
+  if ($completed) {
+    return $self->delete()
+  } elsif ($release) {
+    $model->under_action(0);
+  } elsif ($under_action) {
+    $model->under_action(1);
+  } else {}
+
   $model->save();
   return 1;
 }
