@@ -102,6 +102,10 @@ message_queue::model::message
 
 =head2 json_message - for outputing the json string with no quotes if the string matches a json string style
 
+=head2 queues - method to return an arrayref of queue objects for all queues
+
+  my $aQueues = $oMessage->queues();
+
 =head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT
