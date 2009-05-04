@@ -157,7 +157,7 @@ sub _get_q_object {
   return $q_object;
 }
 
-sub read__by_queue {
+sub read_by_queue {
   my ($self) = @_;
   my $model = $self->model();
   my $queue = $model->id_message();

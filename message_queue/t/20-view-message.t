@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Carp;
 use English qw{-no_match_vars};
-use Test::More tests => 49;
+use Test::More tests => 50;
 use t::util;
 use message_queue::model::message;
 use JSON;
@@ -540,4 +540,14 @@ my $util = t::util->new({fixtures => 1});
     cgi_params => {},
   });
   ok($util->test_rendered($str, q{t/data/rendered/message/read_deleted_message_id9.html}), q{read_deleted_message_id9 render ok});
+}
+
+{
+  my $str = t::request->new({
+    PATH_INFO => '/message/by/queue/1',
+    REQUEST_METHOD => 'GET',
+    util => $util,
+    cgi_params => {},
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/read_by_queue.html}), q{read_by_queue render ok});
 }
