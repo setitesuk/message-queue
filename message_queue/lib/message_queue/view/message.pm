@@ -285,7 +285,7 @@ message_queue::view::message
 
 =head2 create_json - method called to process an incoming create that is json
 
-=head2 read__by_queue - method to provide a response which will link through to queue/<name>
+=head2 read_by_queue - method to provide a response which will link through to queue/<name>
 
 =head2 update - method called on update
 
