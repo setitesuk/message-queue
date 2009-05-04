@@ -1,0 +1,35 @@
+<h2>Edit Message </h2>
+<form method="post" action="/cgi-bin/message_queue/message/9">
+ <ul>
+  <li>
+   <label for="queue">Queue</label>
+   <select name="id_queue">
+     <option value="1">test_queue_1</option>
+     <option value="2">test_queue_2</option>
+   </select>
+  </li>
+  <li>
+   <label for="sender">Sender</label>
+   <input type="text" id="sender" name="sender" value="test_sender" />
+  </li>
+  <li>
+   <label for="release">Release back to Queue</label>
+   <select id="release" name="release">
+     <option value="0">No</option>
+     <option value="1">Yes</option>
+   </select>
+  </li>
+  <li>
+   <label for="complete">Completed</label>
+   <select id="completed" name="completed">
+     <option value="1">Yes</option>
+     <option value="0">No</option>
+   </select>
+  </li>
+  <li>
+   <label for="message">Message</label>
+   <textarea id="message" name="message" rows="10" cols="50">some message to be posted</textarea>
+  </li>
+ </ul>
+ <input type="submit" value="Update" />
+</form>

@@ -1,0 +1,20 @@
+<h2>Add Message</h2>
+<form method="post" action="/cgi-bin/message_queue/message/">
+ <ul>
+  <li>
+   <label for="queue">Queue</label>
+   <select name="id_queue">
+     <option value="1">test_queue_1</option>
+     <option value="2">test_queue_2</option>
+   </select>
+  </li>
+  <li>
+   <label for="sender">Sender</label>
+   <input type="text" id="sender" name="sender" value="" />
+  </li>  <li>
+   <label for="message">Message</label>
+   <textarea id="message" name="message" rows="10" cols="50"></textarea>
+  </li>
+ </ul>
+ <input type="submit" value="Add" />
+</form>

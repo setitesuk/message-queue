@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Carp;
 use English qw{-no_match_vars};
-use Test::More tests => 38;
+use Test::More tests => 49;
 use t::util;
 use message_queue::model::message;
 use JSON;
@@ -424,4 +424,120 @@ my $util = t::util->new({fixtures => 1});
   isa_ok($href, 'HASH', q{delete_json ok});
   is($href->{message}->{body}, q{}, q{ticket is no longer in system});
 
+}
+{
+  my $str = t::request->new({
+			     PATH_INFO      => '/message/;add',
+			     REQUEST_METHOD => 'GET',
+			     util           => $util,
+			     cgi_params => {},
+			    });
+  ok($util->test_rendered($str, q{t/data/rendered/message/add.html}), q{add render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/;create',
+    REQUEST_METHOD => 'POST',
+    util => $util,
+    cgi_params => {
+      id_queue => 1,
+      sender => 'test_sender',
+      message => 'some message to be posted',
+    },
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/create.html}), q{create render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;edit',
+    REQUEST_METHOD => 'GET',
+    util => $util,
+    cgi_params => {},
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/edit.html}), q{edit render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;update',
+    REQUEST_METHOD => 'POST',
+    util => $util,
+    cgi_params => {
+      id_queue => 1,
+      sender => 'test_sender',
+      message => 'some message to be posted',
+      under_action => 1,
+    },
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/update.html}), q{update render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;edit',
+    REQUEST_METHOD => 'GET',
+    util => $util,
+    cgi_params => {},
+  });
+#  warn $str;
+  ok($util->test_rendered($str, q{t/data/rendered/message/edit2.html}), q{edit2 render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;update',
+    REQUEST_METHOD => 'POST',
+    util => $util,
+    cgi_params => {
+      id_queue => 1,
+      sender => 'test_sender',
+      message => 'some message to be posted',
+      release => 1,
+      completed => 0,
+    },
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/update.html}), q{update render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;edit',
+    REQUEST_METHOD => 'GET',
+    util => $util,
+    cgi_params => {},
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/edit.html}), q{edit render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;update',
+    REQUEST_METHOD => 'POST',
+    util => $util,
+    cgi_params => {
+      id_queue => 1,
+      sender => 'test_sender',
+      message => 'some message to be posted',
+      under_action => 1,
+    },
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/update.html}), q{update render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;edit',
+    REQUEST_METHOD => 'GET',
+    util => $util,
+    cgi_params => {},
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/edit2.html}), q{edit2 render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9;update',
+    REQUEST_METHOD => 'POST',
+    util => $util,
+    cgi_params => {
+      id_queue => 1,
+      sender => 'test_sender',
+      message => 'some message to be posted',
+      release => 0,
+      completed => 1,
+    },
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/update.html}), q{update render ok});
+
+  $str = t::request->new({
+    PATH_INFO => '/message/9',
+    REQUEST_METHOD => 'GET',
+    util => $util,
+    cgi_params => {},
+  });
+  ok($util->test_rendered($str, q{t/data/rendered/message/read_deleted_message_id9.html}), q{read_deleted_message_id9 render ok});
 }
