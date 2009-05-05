@@ -1,0 +1,23 @@
+{
+  "messages":[
+    {
+  "id_message":"1",
+  "id_queue":"1",
+  "queue":"test_queue_1",
+  "sender":"greeter",
+  "body":"Happy New Year",
+  "date":"2009-01-01 00:00:15",
+  "under_action":"0",
+  "action_date":""
+},
+    {
+  "id_message":"2",
+  "id_queue":"2",
+  "queue":"test_queue_2",
+  "sender":"greeter",
+  "body":"Happy Easter",
+  "date":"",
+  "under_action":"1",
+  "action_date":"2009-04-12 12:00:15"
+}]
+}

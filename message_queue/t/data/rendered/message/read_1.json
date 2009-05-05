@@ -1,0 +1,10 @@
+{"message":{
+  "id_queue":"1",
+  "queue":"test_queue_1",
+  "id_message":"1",
+  "sender":"test_json_sender",
+  "body":{"json":{"this":"is","some":["json","which"],"should":"be"},"stored":["as","a","string"]},
+  "date":"2009-01-01 00:00:15",
+  "under_action":"0",
+  "action_date":""}
+}
