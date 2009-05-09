@@ -9,6 +9,7 @@ use English qw{-no_match_vars};
 use Readonly;
 use Class::Std;
 use LWP::UserAgent;
+use XML::LibXML;
 
 our $VERSION = 1.0;
 
@@ -16,6 +17,7 @@ our $VERSION = 1.0;
   ## no critic
   my %useragent_of :ATTR( :get<useragent>, :set<useragent> );
   my %json_of :ATTR( :get<json>, :set<json> ); 
+  my %xml_of :ATTR( :get<xml>, :set<xml> ); 
   ## use critic
 
   sub useragent {
@@ -30,6 +32,14 @@ our $VERSION = 1.0;
     return $self->get_useragent();
   }
 
+  sub xml_parser {
+    my ($self) = @_;
+    if ($self->get_xml()) {
+      return $self->get_xml();
+    }
+    $self->set_xml(XML::LibXML->new());
+    return $self->get_xml();
+  }
 
   sub json_parser {
     my ($self) = @_;

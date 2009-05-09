@@ -146,6 +146,22 @@ our $VERSION = 1.0;
     my ($self) = @_;
     return $self->list();
   }
+
+  sub create {
+    my ($self) = @_;
+    if (!$self->get_body()) {
+      croak q{You have not written a message to be posted to};
+    }
+    if (!$self->get_queue()) {
+      croak q{You have no queue for the message to be posted to};
+    }
+
+    if (!$self->get_sender()) {
+      croak q{You have not added a sender for the message};
+    }
+
+    return $self->SUPER::create();
+  }
 }
 
 1;
@@ -212,6 +228,12 @@ __END__
 =head2 queue - returns a queue object for the queue which this message is in
 
   my $oQueue = $oMessage->queue();
+
+=head2 create
+
+=head2 update
+
+=head2 read forces a read on the message, assuming you have the id_message
 
 =head1 DIAGNOSTICS
 

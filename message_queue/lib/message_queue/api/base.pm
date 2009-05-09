@@ -48,10 +48,16 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
     return $MESSAGE_QUEUE_URI.$self->_name_space();
   }
 
-  sub _parse_response {
+  sub _parse_json_response {
     my ($self, $response) = @_;
     my $json_parser = $self->util->json_parser();
     return $json_parser->decode($response->content());
+  }
+
+  sub _parse_xml_response {
+    my ($self, $response) = @_;
+    my $xml_parser = $self->util->xml_parser();
+    return $xml_parser->parse_string($response->content());
   }
 
   sub list {
@@ -64,15 +70,31 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
     if (!$response->is_success()) {
       croak $response->status_line();
     }
-    my $list;
-    my $info = $self->_parse_response($response);
-    foreach my $key (sort keys %{$info}) {
-      foreach my $item (@{$info->{$key}}) {
+    my $list = [];
+    eval {
+      my $info = $self->_parse_json_response($response);
+      foreach my $key (sort keys %{$info}) {
+        foreach my $item (@{$info->{$key}}) {
+          my $object = $ref->new();
+          $object->_populate_object($item);
+          push @{$list}, $object;
+        }
+      }
+      1;
+    } or do {
+      my $uri = $self->_construct_uri().q{.xml};
+      my $response = $ua->get($uri);
+      if (!$response->is_success()) {
+        croak $response->status_line();
+      }
+      my $info = $self->_parse_xml_response($response);
+      my $name_space = $self->_name_space();
+      foreach my $item (@{$info->getElementsByTagName($name_space)}) {
         my $object = $ref->new();
-        $object->_populate_object($item);
+        $object->_populate_object_from_xml($item);
         push @{$list}, $object;
       }
-    }
+    };
 
     return $list;
   }
@@ -90,6 +112,18 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
     return 1;
   }
 
+  sub _populate_object_from_xml {
+    my ($self, $xml) = @_;
+    foreach my $f ($self->fields()) {
+      my $value = $xml->getAttribute($f) || $xml->getElementsByTagName($f)->[0]->firstChild();
+      if (ref$value) {
+        $value = $value->toString();
+      }
+      my $set_method = q{set_}.$f;
+      $self->$set_method($value);
+    }
+  }
+
   sub read {
     my ($self) = @_;
     my $id = $self->pk();
@@ -100,16 +134,27 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
       croak q{No primary key or name (if applicable) provided - try running list method};
     }
     my $ua = $self->util->useragent();
-    my $ref = ref$self;
+
     my $uri = $self->_construct_uri().q{/}.$id.q{.json};
     my $response = $ua->get($uri);
     if (!$response->is_success()) {
       croak $response->status_line();
     }
-    my $info = $self->_parse_response($response);
-    foreach my $key (sort keys %{$info}) {
-      $self->_populate_object($info->{$key});
-    }
+    eval {
+      my $info = $self->_parse_json_response($response);
+      foreach my $key (sort keys %{$info}) {
+        $self->_populate_object($info->{$key});
+      }
+      1;
+    } or do {
+      $uri = $self->_construct_uri().q{/}.$id.q{.xml};
+      my $response = $ua->get($uri);
+      if (!$response->is_success()) {
+       croak $response->status_line();
+      }
+      my $info = $self->_parse_xml_response($response)->getElementsByTagName($self->_name_space())->[0];
+      $self->_populate_object_from_xml($info);
+    };
     return 1;
   }
 
@@ -121,6 +166,38 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
       $self->$set_pk_method($value);
     }
     return $self->$get_pk_method();
+  }
+
+  sub create {
+    my ($self) = @_;
+    if ($self->pk()) {
+      croak q{You have a primary key, please use $oModule->update()};
+    }
+    my $uri = $self->_construct_uri().q{/;create_xml};
+    my $ua = $self->util->useragent();
+    my $response = $ua->post($uri);
+    if (!$response->is_success()) {
+      croak $response->status_line();
+    }
+    my $info = $self->_parse_xml_response($response)->getElementsByTagName($self->_name_space())->[0];
+    $self->_populate_object_from_xml($info);
+    return 1;
+  }
+
+  sub update {
+    my ($self) = @_;
+    if (!$self->pk()) {
+      croak q{You have no primary key, please use $oModule->create()};
+    }
+    my $uri = $self->_construct_uri().q{/;update_xml};
+    my $ua = $self->util->useragent();
+    my $response = $ua->post($uri);
+    if (!$response->is_success()) {
+      croak $response->status_line();
+    }
+    my $info = $self->_parse_xml_response($response)->getElementsByTagName($self->_name_space())->[0];
+    $self->_populate_object_from_xml($info);
+    return 1;
   }
 
 }
@@ -151,6 +228,12 @@ __END__
 =head2 list
 
 =head2 read
+
+=head2 create
+
+=head2 update
+
+=head2 pk - accessor to directly access the primary key field for derived class
 
 =head1 DIAGNOSTICS
 
