@@ -14,7 +14,7 @@ use message_queue::api::queue;
 our $VERSION = 1.0;
 
 {
-  ## no critic
+  ## no critic (ProhibitUnusedVariables)
   my %id_message_of :ATTR( :get<id_message>, :set<id_message> );
   my %id_queue_of :ATTR( :get<id_queue>, :set<id_queue> );
   my %queue_of :ATTR( :get<queue>, :set<queue> );

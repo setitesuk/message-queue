@@ -16,7 +16,7 @@ our $VERSION = 1.0;
 Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
 
 {
-  ## no critic
+  ## no critic (ProhibitUnusedVariables)
   my %util_of :ATTR( :get<util>, :set<util> );
   ## use critic
 
@@ -76,14 +76,15 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
       foreach my $key (sort keys %{$info}) {
         foreach my $item (@{$info->{$key}}) {
           my $object = $ref->new();
+          $object->util($self->util());
           $object->_populate_object($item);
           push @{$list}, $object;
         }
       }
       1;
     } or do {
-      my $uri = $self->_construct_uri().q{.xml};
-      my $response = $ua->get($uri);
+      $uri = $self->_construct_uri().q{.xml};
+      $response = $ua->get($uri);
       if (!$response->is_success()) {
         croak $response->status_line();
       }
@@ -102,7 +103,7 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
   sub _populate_object {
     my ($self, $hash) = @_;
     if (ref$hash ne q{HASH}) {
-      croak qq{$hash is not a HASH}; 
+      croak qq{$hash is not a HASH};
     }
     my @fields = $self->fields();
     foreach my $f (@fields) {
@@ -117,14 +118,21 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
     foreach my $f ($self->fields()) {
       my $value = $xml->getAttribute($f) || $xml->getElementsByTagName($f)->[0]->firstChild();
       if (ref$value) {
-        $value = $value->toString();
+        my $temp = $value->toString();
+        my $text = $temp;
+        $temp =~ s/\s//gxms;
+        if ($temp eq q{}) {
+          $text = $xml->getElementsByTagName($f)->[0]->toString();
+        }
+        $value = $text;
       }
       my $set_method = q{set_}.$f;
       $self->$set_method($value);
     }
+    return 1;
   }
 
-  sub read {
+  sub read { ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     my ($self) = @_;
     my $id = $self->pk();
     if (!$id) {
@@ -148,7 +156,7 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
       1;
     } or do {
       $uri = $self->_construct_uri().q{/}.$id.q{.xml};
-      my $response = $ua->get($uri);
+      $response = $ua->get($uri);
       if (!$response->is_success()) {
        croak $response->status_line();
       }
@@ -171,7 +179,7 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
   sub create {
     my ($self) = @_;
     if ($self->pk()) {
-      croak q{You have a primary key, please use $oModule->update()};
+      croak q{You have a primary key, please use $oModule->update()}; ## no critic (ValuesAndExpressions::RequireInterpolationOfMetachars)
     }
     my $uri = $self->_construct_uri().q{/;create_xml};
     my $ua = $self->util->useragent();
@@ -187,7 +195,7 @@ Readonly::Scalar our $MESSAGE_QUEUE_URI => q{http://localhost:8080/};
   sub update {
     my ($self) = @_;
     if (!$self->pk()) {
-      croak q{You have no primary key, please use $oModule->create()};
+      croak q{You have no primary key, please use $oModule->create()}; ## no critic (ValuesAndExpressions::RequireInterpolationOfMetachars)
     }
     my $uri = $self->_construct_uri().q{/;update_xml};
     my $ua = $self->util->useragent();

@@ -1,0 +1,13 @@
+{"queue":{
+  "id_queue":"2",
+  "name":"test_queue_2",
+  "messages":[
+    {"id_message":"2",
+     "id_queue":"2",
+     "queue":"test_queue_2",
+     "sender":"greeter",
+     "body":"Happy Easter",
+     "date":"",
+     "under_action":"1",
+     "action_date":"2009-04-12 12:00:15"}]
+}}

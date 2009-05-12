@@ -14,10 +14,10 @@ use XML::LibXML;
 our $VERSION = 1.0;
 
 {
-  ## no critic
+  ## no critic (ProhibitUnusedVariables)
   my %useragent_of :ATTR( :get<useragent>, :set<useragent> );
-  my %json_of :ATTR( :get<json>, :set<json> ); 
-  my %xml_of :ATTR( :get<xml>, :set<xml> ); 
+  my %json_of :ATTR( :get<json>, :set<json> );
+  my %xml_of :ATTR( :get<xml>, :set<xml> );
   ## use critic
 
   sub useragent {
@@ -69,6 +69,12 @@ __END__
 =head1 DESCRIPTION
 
 =head1 SUBROUTINES/METHODS
+
+=head2 useragent - accessor for a useragent object, creating a default LWP::UserAgent object if none found
+
+=head2 json_parser - accessor for a JSON parser object, creating a default JSON object if none found
+
+=head2 xml_parser - accessor for an XML parser object, creating a default XML::LibXML object if none found
 
 =head1 DIAGNOSTICS
 

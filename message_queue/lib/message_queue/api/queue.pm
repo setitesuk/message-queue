@@ -14,15 +14,17 @@ use message_queue::api::message;
 our $VERSION = 1.0;
 
 {
-  ## no critic
+  ## no critic (ProhibitUnusedVariables)
   my %id_queue_of :ATTR( :get<id_queue>, :set<id_queue> );
   my %name_of     :ATTR( :get<name>,     :set<name>     );
+  my %messages_of :ATTR( :get<messages>, :set<messages> );
   ## use critic
 
   sub fields {
     return qw{
       id_queue
       name
+      messages
     };
   }
 
@@ -50,15 +52,73 @@ our $VERSION = 1.0;
 
   sub queues {
     my ($self) = @_;
-    if ($self->get_all()) {
-      return $self->get_all();
-    }
     return $self->list();
   }
 
   sub messages {
     my ($self) = @_;
-    return 1;
+    my $messages_array = $self->get_messages();
+    my $util = $self->util();
+    my $xml_parser = $util->xml_parser();
+    my $xml;
+
+    if (!$messages_array) {
+      $self->read();
+      $messages_array = $self->get_messages();
+    }
+
+    if (!$messages_array) {
+      $self->set_messages([]);
+      return $self->get_messages();
+    }
+
+    if (ref$messages_array eq 'ARRAY' &&
+        (!scalar@{$messages_array} || ref$messages_array->[0] eq 'message_queue::api::message')
+       ) {
+      return $messages_array;
+    }
+
+    if (!ref$messages_array) {
+      $xml = $self->_test_is_xml($messages_array);
+      if (!$xml) {
+        $self->set_messages([]);
+        return $self->get_messages();
+      }
+    }
+
+    if (!$xml) {
+      foreach my $m (@{$messages_array}) {
+        my $obj = message_queue::api::message->new();
+        $obj->util($self->util());
+        $obj->_populate_object($m);
+        $m = $obj;
+      }
+      return $messages_array;
+    }
+
+    my @messages = $xml->getElementsByTagName(q{message});
+    foreach my $m (@messages) {
+      my $obj = message_queue::api::message->new({ util => $self->util() });
+      $obj->_populate_object_from_xml($m);
+      $m = $obj;
+    }
+    $self->set_messages(\@messages);
+    return $self->get_messages();
+  }
+
+  sub _test_is_xml {
+    my ($self, $what) = @_;
+    if (!$what || ref$what) {
+      return 0;
+    }
+    my $xml;
+    my $xml_parser = $self->util->xml_parser();
+    eval {
+      $xml = $xml_parser->parse_string($what);
+    } or do {
+      return 0;
+    };
+    return $xml;
   }
 }
 
